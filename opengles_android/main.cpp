@@ -90,21 +90,25 @@ int main(int argc, const char* argv[])
     // ------------------------------------------------------------------
 
     float vertices[] = {
-         0.5f, -0.5f, 0.0f,  1.0f,  // bottom righ
         -0.5f, -0.5f, 0.0f,  1.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  1.0f  // top
+         0.5f, -0.5f, 0.0f,  1.0f,  // bottom righ
+         0.5f,  0.5f, 0.0f,  1.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f,  1.0f  // top
     };
 
     float colors[] = {
          1.0f, 0.0f, 0.0f, 1.0f, // bottom right
          0.0f, 1.0f, 0.0f, 1.0f, // bottom left
-         0.0f, 0.0f, 1.0f, 1.0f // top
+         0.0f, 0.0f, 1.0f, 1.0f, // top
+         1.0f, 0.0f, 1.0f, 1.0f // top
     };
 
-    glVertexAttribPointer(positionHandle, 4, GL_FLOAT, GL_FALSE, 0, vertices);
+    GLint drawOrder[] = { 0, 1, 2, 0, 2, 3 };
+
+    glVertexAttribPointer(positionHandle, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GL_FLOAT), vertices);
     glEnableVertexAttribArray(positionHandle);
 
-    glVertexAttribPointer(fragcolorHandle, 4, GL_FLOAT, GL_FALSE, 0, colors);
+    glVertexAttribPointer(fragcolorHandle, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GL_FLOAT), colors);
     glEnableVertexAttribArray(fragcolorHandle);
 
     /*
@@ -140,7 +144,8 @@ int main(int argc, const char* argv[])
 
         glUseProgram(programID);
       //  glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, drawOrder);
         eglSwapBuffers(mEglDisplay, mEglSurface);
        // glBindVertexArray(0);
         glUseProgram(0);

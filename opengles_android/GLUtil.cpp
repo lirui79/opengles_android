@@ -74,14 +74,7 @@ EGLNativeWindowType GLUtil::getNativeWindow(int width, int height)
         dinfo.w, dinfo.h,
         PIXEL_FORMAT_RGBA_8888, 0);
 
-    /*
-    SurfaceComposerClient::openGlobalTransaction();
-    mSurfaceControl->setLayer(INT_MAX);//设定Z坐标
-    mSurfaceControl->setPosition((dinfo.w - width) / 2, (dinfo.h - height) / 2);
-    mSurfaceControl->setSize(width, height);
- 
-    SurfaceComposerClient::closeGlobalTransaction();*/
-
+#ifdef PLATFORM_VERSION_9
     SurfaceComposerClient::Transaction transaction ;
   //  transaction.setDisplayLayerStack(dtoken, layerStack);
  //   transaction.setDisplayProjection(dtoken, dinfo.orientation, layerRect, dispRect);
@@ -90,7 +83,14 @@ EGLNativeWindowType GLUtil::getNativeWindow(int width, int height)
     transaction.setPosition(mSurfaceControl, (dinfo.w - width) / 2, (dinfo.h - height) / 2);//以左上角为(0,0)设定显示位置
     transaction.show(mSurfaceControl);
     transaction.apply();
- 
+#else
+    SurfaceComposerClient::openGlobalTransaction();
+    mSurfaceControl->setLayer(INT_MAX);//设定Z坐标
+    mSurfaceControl->setPosition((dinfo.w - width) / 2, (dinfo.h - height) / 2);
+    mSurfaceControl->setSize(width, height);
+    SurfaceComposerClient::closeGlobalTransaction();
+#endif
+
     sp<ANativeWindow> window = mSurfaceControl->getSurface();
  
     return window.get();
